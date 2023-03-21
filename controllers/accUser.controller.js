@@ -1,9 +1,13 @@
+const { get } = require("../routes/v1/accUser.route");
+const { getDb } = require("../utils/dbConnect");
+
 let users = [
     { id: 1, name: 'John' },
     { id: 2, name: 'John' },
     { id: 3, name: 'John' },
     { id: 4, name: 'John' }
 ]
+
 module.exports.getAllAccUser = (req, res, next) => {
     // res.download(__dirname +'/accUser.controller.js');
     // res.redirect('/login');
@@ -13,10 +17,19 @@ module.exports.getAllAccUser = (req, res, next) => {
     res.json(users.slice(0, limit));
 }
 
-module.exports.AddAccUser = (req, res, next) => {
-    console.log(req.query);
-    users.push(req.body);
-    res.send(users);
+
+
+module.exports.AddAccUser = async (req, res, next) => {
+
+    try {
+        const db = get();
+        const user = req.body;
+        const result = await db.collection("users").insertOne(user);
+        console.log(result);
+        res.send("Successful")
+    } catch (error) {
+
+    }
 }
 
 module.exports.getUserDetails = (req, res) => {
@@ -25,9 +38,9 @@ module.exports.getUserDetails = (req, res) => {
     // const filter = { _id: id };
     const foundUser = users.find(user => user.id === Number(id))
     res.status(200).send({
-        success:true,
-        messages:"Success",
-        data:foundUser
+        success: true,
+        messages: "Success",
+        data: foundUser
     });
     // res.status(500).send({
     //     success:false,
@@ -48,6 +61,6 @@ module.exports.updateUser = (req, res, next) => {
 module.exports.deleteUser = (req, res) => {
     const { id } = req.params;
     const filter = { _id: id };
-     users = users.filter(user => user.id === Number(id))
+    users = users.filter(user => user.id === Number(id))
     res.send(users)
 }

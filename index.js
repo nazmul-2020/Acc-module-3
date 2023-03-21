@@ -6,6 +6,7 @@ const accUserRouters = require('./routes/v1/accUser.route');
 const viewCount = require('./middleware/viewCount');
 const { rateLimit } = require('express-rate-limit');
 const errorHandler = require('./middleware/erroeHandel');
+const { connectToServer } = require('./utils/dbConnect');
 const port = process.env.port || 5000;
 
 
@@ -26,6 +27,19 @@ app.set("view engine", "ejs");
 
 dbConnect
 
+// connectToServer((err) => {
+//   if (!err) {
+//     app.listen(port, () => {
+//       console.log(`Example app listening on port ${port}`);
+//     });
+//   } else {
+//     console.log(err);
+//   }
+// });
+
+
+
+
 app.use('/api/v1/accUser', accUserRouters)
 
 app.get('/', (req, res) => {
@@ -45,14 +59,19 @@ app.all('*', (req, res) => {
 app.use(errorHandler)
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-});
+        console.log(`Example app listening on port ${port}`);
+      });
+
 
 // global errorHandel
-process.on('uncaughtException',(error)=>{
-  console.log(error.name,error.message);
-  app.close(()=>{
+process.on('uncaughtException', (error) => {
+  console.log(error.name, error.message);
+  app.close(() => {
     process.exit(1);
   });
-  
+
 })
+
+
+
+
